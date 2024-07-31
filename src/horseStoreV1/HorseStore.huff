@@ -1,0 +1,38 @@
+/* interfaces */
+#define function updateNumberOfHorses(uint256) nonpayable returns()
+#define function readNumberOfHorses() view returns(uint256)
+
+#define constant NUMBER_OF_HORSES_STPRAGE_SLOT = FREE_STORAGE_POINTER() //0
+
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xE0 shr 
+    dup1
+    // updateNumberOfHorses 
+    __FUNC_SIG(updateNumberOfHorses) eq updateJump jumpi
+    // readNumberOfHorses 
+    __FUNC_SIG(readNumberOfHorses) eq readJump jumpi
+
+    0x00 0x00 revert
+    
+    updateJump:
+        SET_NUMBER_OF_HORSES()
+
+    readJump:
+        GET_NUMBER_OF_HORSES()
+}
+
+#define macro SET_NUMBER_OF_HORSES() = takes(0) returns(0) {
+    0x04 calldataload
+    [NUMBER_OF_HORSES_STPRAGE_SLOT]
+    sstore
+    stop
+
+}
+
+#define macro GET_NUMBER_OF_HORSES() = takes(0) returns(0) {
+    [NUMBER_OF_HORSES_STPRAGE_SLOT]
+    sload
+    0x00
+    mstore
+    0x20 0x00 return
+}
